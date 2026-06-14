@@ -2,7 +2,7 @@
 // Required env vars: RESEND_API_KEY, OWNER_EMAIL
 
 const RESEND_API = 'https://api.resend.com/emails';
-const FROM = 'parkerh.com <noreply@flycraftchs.com>';
+const FROM = process.env.PORTFOLIO_FROM || 'parkerh.com <onboarding@resend.dev>';
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
