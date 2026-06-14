@@ -400,17 +400,48 @@
   <div class="overlay-inner">
     <form id="contact-form" novalidate autocomplete="off">
       <span class="sr-only">Send a message</span>
-      <div class="field">
-        <label for="f-name" class="sr-only">Your name</label>
-        <input id="f-name" name="name" type="text" required placeholder="name">
+      <div class="form-row">
+        <div class="field">
+          <label for="f-name" class="sr-only">Your name</label>
+          <input id="f-name" name="name" type="text" required placeholder="name">
+        </div>
+        <div class="field">
+          <label for="f-email" class="sr-only">Your email</label>
+          <input id="f-email" name="email" type="email" required placeholder="email">
+        </div>
       </div>
       <div class="field">
-        <label for="f-email" class="sr-only">Your email</label>
-        <input id="f-email" name="email" type="email" required placeholder="email">
+        <label for="f-phone" class="sr-only">Phone (optional)</label>
+        <input id="f-phone" name="phone" type="tel" placeholder="phone (optional)">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="f-project" class="sr-only">Project type</label>
+          <select id="f-project" name="project_type" required data-cursor-hover>
+            <option value="" disabled selected>project type</option>
+            <option value="website">website</option>
+            <option value="brand">brand identity</option>
+            <option value="web_app">web app</option>
+            <option value="ecommerce">ecommerce</option>
+            <option value="automation">automation</option>
+            <option value="other">other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-timeline" class="sr-only">Timeline</label>
+          <select id="f-timeline" name="timeline" required data-cursor-hover>
+            <option value="" disabled selected>timeline</option>
+            <option value="asap">asap</option>
+            <option value="1_month">within a month</option>
+            <option value="1_3_months">1 - 3 months</option>
+            <option value="3_plus_months">3+ months</option>
+            <option value="flexible">flexible</option>
+          </select>
+        </div>
       </div>
       <div class="field">
         <label for="f-message" class="sr-only">Your message</label>
-        <textarea id="f-message" name="message" required placeholder="message"></textarea>
+        <textarea id="f-message" name="message" required placeholder="what are you building?"></textarea>
       </div>
       <button type="submit" class="send" data-cursor-hover>Send</button>
       <div class="status" id="form-status" aria-live="polite"></div>
