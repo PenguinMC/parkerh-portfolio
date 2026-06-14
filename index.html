@@ -74,20 +74,68 @@
   }
 
   /* The one thing: a tiny pulsing dot in dead center */
-  .lure {
+  /* Wrapper centered on screen so dot + label stack */
+  .lure-wrap {
     position: fixed;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
-    width: 8px; height: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    z-index: 10;
+  }
+  .lure {
+    position: relative;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 20px var(--accent-glow), 0 0 60px var(--accent-glow);
+    box-shadow: 0 0 24px var(--accent-glow), 0 0 70px var(--accent-glow);
     cursor: none;
-    z-index: 10;
     border: none;
     padding: 0;
     animation: lurePulse 2.4s ease-in-out infinite;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
+  .lure-wrap:hover .lure {
+    transform: scale(1.3);
+  }
+  .lure-label {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    padding-left: 0.5em; /* compensate for letter-spacing visual offset */
+    pointer-events: none;
+    transition: color 0.4s ease, letter-spacing 0.4s ease, transform 0.4s ease;
+    user-select: none;
+  }
+  .lure-arrow {
+    display: block;
+    margin: 14px auto 0;
+    width: 1px; height: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5), transparent);
+    position: relative;
+    transition: height 0.4s ease, background 0.4s ease;
+  }
+  .lure-arrow::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 50%;
+    width: 5px; height: 5px;
+    border-right: 1px solid rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    transform: translate(-50%, -50%) rotate(45deg);
+    transition: border-color 0.4s ease;
+  }
+  .lure-wrap:hover .lure-label {
+    color: var(--fg);
+    letter-spacing: 0.58em;
+  }
+  .lure-wrap:hover .lure-arrow { background: linear-gradient(180deg, var(--accent), transparent); height: 28px; }
+  .lure-wrap:hover .lure-arrow::after { border-color: var(--accent); }
   .lure::before {
     content: "";
     position: absolute;
@@ -262,7 +310,13 @@
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="cursor-dot" aria-hidden="true"></div>
 
-<button class="lure" data-cursor-hover aria-label="Open contact"></button>
+<div class="lure-wrap">
+  <button class="lure" data-cursor-hover aria-label="Open contact"></button>
+  <div>
+    <div class="lure-label">CONTACT</div>
+    <div class="lure-arrow"></div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Contact">
   <button class="overlay-close" data-cursor-hover aria-label="Close"></button>
@@ -407,7 +461,7 @@
 /* ===== Overlay open / close ===== */
 (function () {
   const overlay = document.getElementById('overlay');
-  const lure = document.querySelector('.lure');
+  const lure = document.querySelector('.lure-wrap');
   const closeBtn = overlay.querySelector('.overlay-close');
   const firstField = overlay.querySelector('input');
   function open() {
