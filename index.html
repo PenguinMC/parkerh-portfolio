@@ -74,68 +74,91 @@
   }
 
   /* The one thing: a tiny pulsing dot in dead center */
-  /* Wrapper centered on screen so dot + label stack */
+  /* Centered contact: a slowly rotating ring of text around a small arrow.
+     The whole .lure-wrap is the click target. */
   .lure-wrap {
     position: fixed;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
+    width: 220px; height: 220px;
     z-index: 10;
-  }
-  .lure {
-    position: relative;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 24px var(--accent-glow), 0 0 70px var(--accent-glow);
     cursor: none;
     border: none;
+    background: transparent;
     padding: 0;
-    animation: lurePulse 2.4s ease-in-out infinite;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 50%;
   }
-  .lure-wrap:hover .lure {
-    transform: scale(1.3);
+  .lure-ring {
+    position: absolute;
+    inset: 0;
+    animation: lureSpin 18s linear infinite;
+    transition: animation-duration 0.5s ease;
   }
-  .lure-label {
+  .lure-wrap:hover .lure-ring {
+    animation-duration: 6s;
+  }
+  .lure-ring svg { width: 100%; height: 100%; overflow: visible; }
+  .lure-ring text {
     font-family: var(--mono);
     font-weight: 400;
-    font-size: 10px;
-    letter-spacing: 0.5em;
+    font-size: 11px;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-    padding-left: 0.5em; /* compensate for letter-spacing visual offset */
-    pointer-events: none;
-    transition: color 0.4s ease, letter-spacing 0.4s ease, transform 0.4s ease;
-    user-select: none;
+    fill: rgba(255,255,255,0.78);
+    transition: fill 0.4s ease;
   }
-  .lure-arrow {
-    display: block;
-    margin: 14px auto 0;
-    width: 1px; height: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.5), transparent);
-    position: relative;
-    transition: height 0.4s ease, background 0.4s ease;
-  }
-  .lure-arrow::after {
-    content: "";
+  .lure-wrap:hover .lure-ring text { fill: #fff; }
+
+  /* Center mark: a thin ring + small arrow */
+  .lure-center {
     position: absolute;
-    bottom: -1px; left: 50%;
-    width: 5px; height: 5px;
-    border-right: 1px solid rgba(255,255,255,0.5);
-    border-bottom: 1px solid rgba(255,255,255,0.5);
-    transform: translate(-50%, -50%) rotate(45deg);
-    transition: border-color 0.4s ease;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    display: grid; place-items: center;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.4s ease,
+                background 0.4s ease,
+                box-shadow 0.5s ease;
   }
-  .lure-wrap:hover .lure-label {
-    color: var(--fg);
-    letter-spacing: 0.58em;
+  .lure-wrap:hover .lure-center {
+    transform: translate(-50%, -50%) scale(1.08);
+    border-color: var(--accent);
+    background: rgba(110,94,251,0.06);
+    box-shadow: 0 0 40px var(--accent-glow), inset 0 0 30px rgba(110,94,251,0.08);
   }
-  .lure-wrap:hover .lure-arrow { background: linear-gradient(180deg, var(--accent), transparent); height: 28px; }
-  .lure-wrap:hover .lure-arrow::after { border-color: var(--accent); }
+  .lure-arrow-svg {
+    width: 26px; height: 26px;
+    color: rgba(255,255,255,0.85);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.4s ease;
+  }
+  .lure-wrap:hover .lure-arrow-svg {
+    transform: translate(2px, -2px);
+    color: #fff;
+  }
+
+  /* Subtle violet aura behind the whole assembly */
+  .lure-aura {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(110,94,251,0.22) 0%, transparent 60%);
+    pointer-events: none;
+    animation: lureBreath 4.5s ease-in-out infinite;
+    z-index: -1;
+  }
+  @keyframes lureBreath {
+    0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.95); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  }
+  @keyframes lureSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
   .lure::before {
     content: "";
     position: absolute;
@@ -310,11 +333,25 @@
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="cursor-dot" aria-hidden="true"></div>
 
-<div class="lure-wrap">
-  <button class="lure" data-cursor-hover aria-label="Open contact"></button>
-  <div>
-    <div class="lure-label">CONTACT</div>
-    <div class="lure-arrow"></div>
+<button class="lure-wrap" data-cursor-hover aria-label="Open contact">
+  <span class="lure-aura" aria-hidden="true"></span>
+  <span class="lure-ring" aria-hidden="true">
+    <svg viewBox="0 0 220 220">
+      <defs>
+        <path id="lure-circle" d="M 110, 110 m -94, 0 a 94,94 0 1,1 188,0 a 94,94 0 1,1 -188,0" />
+      </defs>
+      <text>
+        <textPath href="#lure-circle" startOffset="0">CONTACT &#x2022; PARKER HUGHES &#x2022; CONTACT &#x2022; PARKER HUGHES &#x2022; </textPath>
+      </text>
+    </svg>
+  </span>
+  <span class="lure-center" aria-hidden="true">
+    <svg class="lure-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="7" y1="17" x2="17" y2="7"/>
+      <polyline points="9,7 17,7 17,15"/>
+    </svg>
+  </span>
+</button>
   </div>
 </div>
 
