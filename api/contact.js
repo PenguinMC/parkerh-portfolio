@@ -15,7 +15,9 @@ module.exports = async (req, res) => {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const name = String(body.name || '').trim();
     const email = String(body.email || '').trim();
+    const phone = String(body.phone || '').trim();
     const project_type = String(body.project_type || '').trim();
+    const timeline = String(body.timeline || '').trim();
     const message = String(body.message || '').trim();
 
     if (!name || !email || !message) {
@@ -42,8 +44,10 @@ module.exports = async (req, res) => {
   </td></tr>
   <tr><td style="padding:16px 36px 28px;">
     <table cellpadding="6" cellspacing="0" border="0" style="font-family:'Courier New',monospace;font-size:13px;color:#fff;width:100%;">
-      <tr><td style="color:rgba(255,255,255,0.5);width:90px;">EMAIL</td><td><a href="mailto:${safe(email)}" style="color:#6E5EFB;text-decoration:none;">${safe(email)}</a></td></tr>
+      <tr><td style="color:rgba(255,255,255,0.5);width:100px;">EMAIL</td><td><a href="mailto:${safe(email)}" style="color:#6E5EFB;text-decoration:none;">${safe(email)}</a></td></tr>
+      ${phone ? `<tr><td style="color:rgba(255,255,255,0.5);">PHONE</td><td><a href="tel:${safe(phone)}" style="color:#6E5EFB;text-decoration:none;">${safe(phone)}</a></td></tr>` : ''}
       <tr><td style="color:rgba(255,255,255,0.5);">PROJECT</td><td>${safe(project_type) || '(not specified)'}</td></tr>
+      <tr><td style="color:rgba(255,255,255,0.5);">TIMELINE</td><td>${safe(timeline) || '(not specified)'}</td></tr>
     </table>
     <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);">
       <div style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.22em;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:14px;">Message</div>
@@ -57,7 +61,7 @@ module.exports = async (req, res) => {
 </td></tr></table>
 </body></html>`;
 
-    const text = `New inquiry on parkerh.com\n\nName: ${name}\nEmail: ${email}\nProject: ${project_type || '(not specified)'}\n\nMessage:\n${message}\n\nReply: mailto:${email}`;
+    const text = `New inquiry on parkerh.com\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || '(not provided)'}\nProject: ${project_type || '(not specified)'}\nTimeline: ${timeline || '(not specified)'}\n\nMessage:\n${message}\n\nReply: mailto:${email}`;
 
     const r = await fetch(RESEND_API, {
       method: 'POST',
